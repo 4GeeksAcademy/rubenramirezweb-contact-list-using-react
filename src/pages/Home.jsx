@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import CardContact from "../components/CardContact.jsx";
 
@@ -18,14 +17,13 @@ export const Home = () => {
 			}
 
 		} catch (error) {
-
+			console.log(error);
 		}
 	}
 
 	const obtenerContactos = async () => {
 		try {
 			const response = await fetch(store.apiUrl + '/agendas/' + store.agendaSlug + '/contacts');
-
 
 			if (response.status == 404) {
 				createAgenda()
@@ -39,7 +37,7 @@ export const Home = () => {
 			const data = await response.json();
 			dispatch({ type: "set_contacts", payload: { contacts: data.contacts } })
 		} catch (error) {
-
+			console.log(error);
 		}
 	};
 
@@ -49,28 +47,24 @@ export const Home = () => {
 
 	return (
 		<div className="text-center mt-5">
-			<h2>Lista de Contactos</h2>
+			<h2>Contact List</h2>
 			<div className="row justify-content-center">
 				{store.contacts.map((contact) => (
-					<div key={contact.id} className="col-12 mb-3 d-flex justify-content-center">
-						{/* Pasamos los datos al componente CardContact */}
-						<CardContact
-							name={contact.name}
-							phone={contact.phone}
-							email={contact.email}
-							address={contact.address}
-							id={contact.id}
-						/>
+					<div className="container col-12 mb-3 d-flex justify-content-center"> 
+						<div key={contact.id} className="">
+							{/* Pasamos los datos al componente CardContact */}
+							<CardContact
+								name={contact.name}
+								phone={contact.phone}
+								email={contact.email}
+								address={contact.address}
+								id={contact.id}
+								obtenerContactos={obtenerContactos}
+							/>
+						</div>
 					</div>
 				))}
 			</div>
-			{/* <ul>
-				{store.contacts.map((value, index) => {
-
-					return <li key={value.id}> {value.name} </li>
-				})}
-			</ul>
-			<CardContact /> */}
 		</div>
 	);
 }; 

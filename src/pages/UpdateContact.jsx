@@ -1,35 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import useGlobalReducer from '../hooks/useGlobalReducer';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const UpdateContact = () => {
 
   const { store, dispatch } = useGlobalReducer();
-  const [contact, setContact] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-  });
+
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
 
   const params = useParams();
-  console.log(params.id)
+  const navigate = useNavigate();
+  // console.log(params.id)
 
   const handleUpdateContact = async (contact_id) => {
-
     let updateContact = {
-      "name": name,
-      "phone": phone,
-      "email": email,
-      "adress": address,
+      name: name,
+      phone: phone,
+      email: email,
+      address: address,
     };
 
     try {
-      const response = await fetch(`store.apiUrl + '/agendas/' + store.agendaSlug + '/contacts' + ${contact_id}`, {
+      const response = await fetch(`${store.apiUrl}/agendas/${store.agendaSlug}/contacts/${contact_id}`, {
         method: "PUT",
         headers: {
           'Content-Type': 'application/json'
@@ -37,53 +32,16 @@ const UpdateContact = () => {
         body: JSON.stringify(updateContact)
       });
 
-      if (!response.ok)
-        throw new Error(`Ocurrió un error al crear el contacto con id: ${contact_id}`);
+      if (!response.ok) {
+        throw new Error(`Ocurrió un error al actualizar el contacto con id: ${contact_id}`);
+      }
+      navigate('/');
+      // alert("Contacto actualizado correctamente");
 
-      // setContact({
-      //   name: "",
-      //   email: "",
-      //   phone: "",
-      //   address: ""
-      // });
     } catch (error) {
       console.log(error)
     }
   };
-
-  const handleChange = (e) => {
-    setContact({ ...contact, [e.target.name]: e.target.value })
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  }
-
-  //   try {
-  //     const response = await fetch(store.apiUrl + '/agendas/' + store.agendaSlug + '/contacts', { 
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(contact)
-  //      });
-
-  //     if (!response.ok) {
-  //       throw new Error("Ocurrio un error al crear la agenda");
-  //     }
-
-  // Limpia el formulario después de registrar el contacto
-  //   setName({
-  //     name: "",
-  //     email: "",
-  //     phone: "",
-  //     address: ""
-  //   });
-
-  //   } catch (error) {
-
-  //   }
-  // }
 
   useEffect(() => {
     const contact = store.contacts.find((contact) => contact.id == params.id)
@@ -105,14 +63,13 @@ const UpdateContact = () => {
                 Full Name
               </label>
               <input
-                type="name"
+                type="text"
                 value={name}
                 className="form-control"
                 // id="exampleInputEmail1"
                 placeholder='Full Name'
-                onChange={handleChange}
+                onChange={(event) => { setName(event.target.value) }}
               />
-
             </div>
 
             <div className="mb-3">
@@ -120,12 +77,12 @@ const UpdateContact = () => {
                 Phone
               </label>
               <input
-                type="phone"
+                type="text"
                 value={phone}
                 className="form-control"
                 // id="exampleInputPassword1"
                 placeholder='Enter phone'
-                onChange={handleChange}
+                onChange={(event) => { setPhone(event.target.value) }}
               />
             </div>
 
@@ -139,7 +96,7 @@ const UpdateContact = () => {
                 className="form-control"
                 // id="exampleInputPassword1"
                 placeholder='Enter email'
-                onChange={handleChange}
+                onChange={(event) => { setEmail(event.target.value) }}
               />
             </div>
 
@@ -148,7 +105,7 @@ const UpdateContact = () => {
                 Address
               </label>
               <input
-                type="text"
+                type="address"
                 value={address}
                 className="form-control"
                 id="inputAddress"
@@ -157,17 +114,24 @@ const UpdateContact = () => {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary justify-content-auto" onClick={() => {
+            <button type="button" className="btn btn-primary justify-content-auto" onClick={(event) => {
+              event.preventDefault();
               handleUpdateContact(params.id);
             }}>
               Update Contact
             </button>
+
+            <div className="d-flex justify-content-center mt-5">
+              <Link to="/">
+                <button className="btn btn-danger">
+                  Go Home
+                </button>
+              </Link>
+            </div>
+
           </form>
         </div>
       </div>
-
-
-
     </div>
   )
 }

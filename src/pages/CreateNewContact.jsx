@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Link, useNavigate } from 'react-router-dom';
 
 const CreateNewContact = () => {
   const { store, dispatch } = useGlobalReducer()
+  const navigate = useNavigate();
 
   const [contact, setContact] = useState({
     name: "",
@@ -20,26 +22,27 @@ const CreateNewContact = () => {
 
     console.log(contact)
     try {
-      const response = await fetch(store.apiUrl + '/agendas/' + store.agendaSlug + '/contacts', { 
+      const response = await fetch(store.apiUrl + '/agendas/' + store.agendaSlug + '/contacts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(contact)
-       });
+      });
 
       if (!response.ok) {
         throw new Error("Ocurrio un error al crear la agenda");
       }
 
       // Limpia el formulario después de registrar el contacto
-    setContact({
-      name: "",
-      email: "",
-      phone: "",
-      address: ""
-    });
+      setContact({
+        name: "",
+        email: "",
+        phone: "",
+        address: ""
+      });
 
+      navigate('/');
     } catch (error) {
 
     }
@@ -57,11 +60,10 @@ const CreateNewContact = () => {
                 Name
               </label>
               <input
-                type="text"
+                type="name"
                 name="name"
                 value={contact.name}
                 className="form-control"
-                id="exampleInputEmail1"
                 placeholder='Full Name'
                 onChange={handleChange}
               />
@@ -77,7 +79,6 @@ const CreateNewContact = () => {
                 name="phone"
                 value={contact.phone}
                 className="form-control"
-                id="exampleInputPassword1"
                 placeholder='Enter phone'
                 onChange={handleChange}
               />
@@ -92,7 +93,6 @@ const CreateNewContact = () => {
                 name="email"
                 value={contact.email}
                 className="form-control"
-                id="exampleInputPassword1"
                 placeholder='Enter email'
                 onChange={handleChange}
               />
@@ -103,11 +103,10 @@ const CreateNewContact = () => {
                 Address
               </label>
               <input
-                type="text"
+                type="address"
                 name="address"
                 value={contact.address}
                 className="form-control"
-                id="exampleInputPassword1"
                 placeholder='Enter address'
                 onChange={handleChange}
               />
@@ -116,15 +115,18 @@ const CreateNewContact = () => {
             <button type="submit" className="btn btn-primary justify-content-auto" onClick={handleSubmit}>
               Register Contact
             </button>
-            <p className="mt-3">
-              <a href="https://urban-capybara-x5vg9p7rjqrvcp55g-3000.app.github.dev/">or get backs to contacts</a>
-            </p>
+
+            <div className="d-flex justify-content-center mt-5">
+              <Link to="/">
+                <button className="btn btn-danger">
+                  Go Home
+                </button>
+              </Link>
+            </div>
+
           </form>
         </div>
       </div>
-
-
-
     </div>
   )
 }
